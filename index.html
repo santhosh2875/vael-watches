@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vael</title>
+  <meta name="description" content="The Vael Caldera: a watch with a case like cooled lava and a dial fired eleven times. Scroll to move around it, then choose your dial.">
+  <meta name="theme-color" content="#0b0a09">
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=Syne:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#made">Skip to how it is made</a>
+
+  <header class="bar">
+    <a class="brand" id="brand" href="#top">VAEL</a>
+    <nav class="nav" id="nav" aria-label="Main"></nav>
+    <div class="bar-right">
+      <time class="clock" id="clock" aria-label="Current time"></time>
+      <a class="bag" id="bag" href="#top">Bag (0)</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Film: the watch stays on screen while scrolling moves the camera
+         around it. app.js paints it on the canvas and fades each panel in. -->
+    <section class="film" id="top" aria-label="The Caldera, from every side">
+      <div class="pin">
+        <canvas class="screen" id="screen" aria-hidden="true"></canvas>
+        <div class="shade" aria-hidden="true"></div>
+
+        <div class="panels" id="panels"></div>
+
+        <!-- Last stop: choose a dial -->
+        <form class="panel panel-buy" id="buy" novalidate>
+          <p class="kicker" id="buyKicker"></p>
+          <h2 id="dialName"></h2>
+          <p class="dial-note" id="dialNote"></p>
+          <p class="panel-text" id="dialText"></p>
+          <div class="buy-row">
+            <p class="price" id="price"></p>
+            <button class="btn" type="submit">Add to bag</button>
+          </div>
+          <fieldset>
+            <legend class="visually-hidden">Dial colour</legend>
+            <div class="dials" id="dials"></div>
+          </fieldset>
+          <p class="buy-note" id="buyNote" role="status"></p>
+        </form>
+
+        <p class="hint" id="hint" hidden></p>
+        <p class="counter" aria-hidden="true"><span id="count">01</span><span id="total"></span></p>
+        <a class="cue" id="cue" href="#made">Scroll</a>
+      </div>
+    </section>
+
+    <section class="section" id="made" aria-labelledby="madeTitle">
+      <div class="wrap">
+        <header class="head">
+          <h2 class="display" id="madeTitle" data-reveal>Nine days per watch.</h2>
+          <p class="lede" data-reveal>Three stages, all in one workshop, none of them quick.</p>
+        </header>
+        <ol class="cards" id="cards"></ol>
+      </div>
+    </section>
+
+    <section class="section section-rule" id="specs" aria-labelledby="specsTitle">
+      <div class="wrap">
+        <h2 class="display" id="specsTitle" data-reveal>Heavy, and meant to be.</h2>
+        <dl class="specs" id="specList"></dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-row">
+      <p class="footer-mark" id="footMark">VAEL</p>
+      <p><a id="footEmail"></a><br><a id="footPhone"></a></p>
+      <p class="footer-note">Demo site. Prices, measurements and contact details are placeholders, and the watch images are computer-generated.</p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

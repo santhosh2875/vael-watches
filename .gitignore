@@ -1,0 +1,5 @@
+# Not needed by the site
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc

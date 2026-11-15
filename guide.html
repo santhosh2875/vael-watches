@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image and clip guide | Vael</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --haze: #eef3f2;
+      --sheet: #ffffff;
+      --ink: #0d1820;
+      --ink-soft: #4a5a63;
+      --line: #cfdad9;
+      --sea: #1c5d6a;
+      --sea-tint: #e0ebea;
+      --dawn: #f1d6a8;
+      --ok: #1f7a55;
+      --display: "Bodoni Moda", "Didot", serif;
+      --text: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--haze);
+      color: var(--ink);
+      font-family: var(--text);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    :focus-visible { outline: 2px solid var(--sea); outline-offset: 2px; border-radius: 4px; }
+
+    code { font-family: var(--mono); font-size: 0.88em; background: var(--sea-tint); padding: 0.1em 0.35em; border-radius: 4px; }
+
+    /* ---------- Sticky bar: progress + the one global choice ---------- */
+    .bar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 20px;
+      padding: 10px clamp(16px, 4vw, 40px);
+      background: rgba(238, 243, 242, 0.92);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .progress { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; font-weight: 500; }
+    .meter { width: 120px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+    .meter span { display: block; height: 100%; width: 0; background: var(--ok); transition: width 300ms ease; }
+
+    .linkbtn {
+      border: 0; background: none; padding: 0; font: inherit; font-size: 0.9rem;
+      color: var(--sea); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+    }
+
+    .mode { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 0.92rem; }
+    .seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--line); }
+    .seg label { position: relative; cursor: pointer; }
+    .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+    .seg span { display: block; padding: 5px 14px; border-radius: 999px; font-weight: 600; color: var(--ink-soft); }
+    .seg input:checked + span { background: var(--ink); color: var(--haze); }
+    .seg input:focus-visible + span { outline: 2px solid var(--sea); outline-offset: 2px; }
+
+    /* ---------- Page ---------- */
+    main { max-width: 860px; margin: 0 auto; padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 40px) 80px; }
+
+    h1 { margin: 0 0 0.3em; font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.08; letter-spacing: -0.01em; }
+    .lede { margin: 0; max-width: 62ch; color: var(--ink-soft); font-size: 1.05rem; }
+
+    .setting { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; padding: 16px; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; }
+    .setting label { display: grid; gap: 4px; flex: 1 1 200px; font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
+    .setting input { font: inherit; font-size: 1rem; color: var(--ink); padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--haze); }
+    .setting p { flex-basis: 100%; margin: 0; font-size: 0.88rem; color: var(--ink-soft); }
+
+    .step { margin-top: clamp(40px, 7vw, 72px); }
+    .step > h2 { display: flex; align-items: baseline; gap: 14px; margin: 0 0 6px; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+    .step > h2 .num { font-family: var(--display); font-weight: 400; font-size: 2.2rem; color: var(--sea); }
+    .step > p { margin: 0 0 18px; max-width: 66ch; color: var(--ink-soft); }
+
+    /* Model recommendation */
+    .model { padding: 18px 20px; border-radius: 12px; background: var(--ink); color: var(--haze); }
+    .model .label { margin: 0; font-size: 0.85rem; color: rgba(238, 243, 242, 0.7); }
+    .model .name { margin: 2px 0 6px; font-size: 1.45rem; font-weight: 700; line-height: 1.2; }
+    .model .name small { margin-left: 8px; font-size: 0.85rem; font-weight: 400; color: rgba(238, 243, 242, 0.7); }
+    .model .why { margin: 0 0 12px; max-width: 64ch; color: rgba(238, 243, 242, 0.86); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .chips li { padding: 4px 11px; border-radius: 999px; background: rgba(241, 214, 168, 0.16); border: 1px solid rgba(241, 214, 168, 0.5); color: var(--dawn); font-size: 0.88rem; font-weight: 500; }
+    .model details { margin-top: 14px; font-size: 0.92rem; }
+    .model summary { cursor: pointer; color: rgba(238, 243, 242, 0.86); }
+    .model details ul { margin: 8px 0 0; padding-left: 1.1em; color: rgba(238, 243, 242, 0.86); }
+    .model details li { margin: 3px 0; }
+    .model details b { color: var(--haze); }
+
+    /* One card per file to generate */
+    .asset { margin-top: 14px; padding: 16px 18px; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; }
+    .asset.is-found { border-color: var(--ok); }
+    .asset-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
+    .asset-head h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+    .status { margin-left: auto; padding: 2px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; background: var(--haze); color: var(--ink-soft); border: 1px solid var(--line); }
+    .is-found .status { background: #dff1e8; color: var(--ok); border-color: #a9d6c0; }
+
+    .asset-body { display: flex; gap: 14px; align-items: flex-start; }
+    .prompt { flex: 1; margin: 0; padding: 12px 14px; border-left: 3px solid var(--sea); border-radius: 0 8px 8px 0; background: var(--sea-tint); font-size: 0.95rem; white-space: pre-wrap; }
+    .preview { flex: none; width: 150px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+    .preview[hidden] { display: none; }
+
+    .asset-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 12px; font-size: 0.9rem; color: var(--ink-soft); }
+    .copy { border: 0; border-radius: 999px; padding: 7px 16px; background: var(--sea); color: #fff; font: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .copy:hover { background: #164b56; }
+    .copy.is-done { background: var(--ok); }
+
+    .note { margin: 14px 0 0; padding: 12px 14px; border-radius: 10px; background: #fbf1dc; border: 1px solid #ecd9ae; font-size: 0.93rem; }
+
+    .files { margin: 0; padding: 14px 16px; border-radius: 10px; background: var(--ink); color: var(--haze); font-family: var(--mono); font-size: 0.86rem; line-height: 1.7; overflow-x: auto; }
+
+    @media (max-width: 620px) {
+      .bar { position: static; }
+      .mode { margin-left: 0; }
+      .asset-body { flex-direction: column; }
+      .preview { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { .meter span { transition: none; } }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <div class="progress" aria-live="polite">
+      <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+      <span id="progressText">Checking folders</span>
+      <button class="linkbtn" id="recheck" type="button">Check folders again</button>
+    </div>
+  </div>
+
+  <main>
+    <h1>Ten pictures, then three clips</h1>
+    <p class="lede">
+      The page already works with the ten pictures alone: it fades from one view to the next as you
+      scroll. The three clips are what turn that into a moving camera, so make the pictures first
+      and the clips second. Each card turns green by itself when its file is in place.
+    </p>
+
+    <div class="setting">
+      <label>The watch
+        <input id="watch" type="text" autocomplete="off">
+      </label>
+      <p>This description fills into the prompts below. Change it only if you want a different watch.</p>
+    </div>
+
+    <p class="note">
+      <b>Three rules that matter:</b> every picture must show the same watch; the watch should sit
+      in the <b>middle</b> of the frame (words appear at the sides and bottom); and there should be
+      no brand name or lettering on the dial. If a picture changes the watch's design, regenerate it.
+      Generate four at a time and keep the most dramatic one: this watch is meant to look like a
+      sculpture, not like something from a shop window.
+    </p>
+
+    <section class="step">
+      <h2><span class="num">1</span> The watch from the front</h2>
+      <p>Text to image. This is the master picture and the top of the page. Every other picture uses it as a reference, so retry until you like the watch.</p>
+      <div class="model" data-model="wide"></div>
+      <div data-assets="master"></div>
+    </section>
+
+    <section class="step">
+      <h2><span class="num">2</span> Three more camera positions</h2>
+      <p>Image to image, with the master as reference each time. These are the places the camera stops as you scroll.</p>
+      <div class="model" data-model="wide-ref"></div>
+      <div data-assets="views"></div>
+    </section>
+
+    <section class="step">
+      <h2><span class="num">3</span> The other three dial colours</h2>
+      <p>Image to image, with <code>04-stand-magma</code> as reference. Only the dial colour changes, so the watch stays still when a visitor picks a colour.</p>
+      <div class="model" data-model="wide-ref"></div>
+      <div data-assets="dials"></div>
+    </section>
+
+    <section class="step">
+      <h2><span class="num">4</span> Three close-ups of it being made</h2>
+      <p>Image to image, with the master as reference so the parts match the watch. These fill the three cards lower down the page.</p>
+      <div class="model" data-model="card"></div>
+      <div data-assets="made"></div>
+    </section>
+
+    <section class="step">
+      <h2><span class="num">5</span> Three clips that join the camera positions</h2>
+      <p>Image to video. Each clip starts on one picture and should end on the next. If you can set an end frame, use the picture named on the card. If there is no place for an end frame, use the start frame alone; the clips can still be joined afterwards.</p>
+      <div class="model" data-model="clip"></div>
+      <div data-assets="clips"></div>
+      <p class="note">When all three clips are in <code>assets/clips</code>, say so. They then get sharpened on this computer and turned into the frame sequence the page plays. Until that is done the page keeps using the still pictures.</p>
+    </section>
+
+    <section class="step">
+      <h2><span class="num">5b</span> Or: one 15-second clip</h2>
+      <p>Three separate clips each slow down at their start and end, so the camera hesitates twice on the way round. One long clip moves at a steady speed with no joins. Make this <b>in place of</b> clips A, B and C, not as well as them.</p>
+      <div class="model" data-model="long"></div>
+      <div data-assets="single"></div>
+      <p class="note">Before you generate, look at the Generate button. If 15 seconds is still free on Unlimited at 480p, go ahead. If it shows a credit cost, stop and say so: the three-clip version can be smoothed on this computer for free.</p>
+    </section>
+
+    <section class="step">
+      <h2><span class="num">6</span> Where the files go</h2>
+      <p>Save every download with exactly these names. Pictures can be JPG, PNG or WebP. Then open <a href="index.html">the website</a> and reload.</p>
+      <pre class="files">assets/stills/01-front.jpg          assets/stills/04-stand-ember.jpg
+assets/stills/02-angle.jpg          assets/stills/04-stand-ash.jpg
+assets/stills/03-macro.jpg          assets/stills/04-stand-cobalt.jpg
+assets/stills/04-stand-magma.jpg    assets/stills/08-made-cast.jpg
+                                    assets/stills/09-made-fire.jpg
+assets/clips/clip-a.mp4             assets/stills/10-made-test.jpg
+assets/clips/clip-b.mp4
+assets/clips/clip-c.mp4             or one long clip: assets/clips/film.mp4</pre>
+    </section>
+  </main>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const TYPES = ["jpg", "png", "webp", "jpeg"];
+    const DEFAULT_WATCH = "an extraordinary sculptural haute-horlogerie wristwatch that looks like an erupting volcano. Its case is shaped like a volcanic crater: a thick, uneven rim of rough black volcanic rock rises around the dial in jagged peaks, split open by deep cracks, and glowing molten-orange lava pours out of those cracks and runs down the sides of the case in thin bright rivers. The dial is a lake of molten lava under a domed crystal, white-hot yellow at the centre, orange around it and crusting into black rock at the edge, with two slim blade-shaped polished steel hands and no numerals or lettering. The bracelet is made of heavy irregular links of black lava rock with glowing orange seams between them, and a few drips of cooled lava hang from the lugs. Every surface is intricately detailed, like a piece of jewellery sculpture"
+
+    const IMAGE = "Marked Unlimited in your Higgsfield account, so with the Unlimited switch on it costs no credits. It also keeps a design steady from one picture to the next better than the other free models.";
+    const MODELS = {
+      wide: { name: "Nano Banana Pro", by: "Google", why: IMAGE,
+        chips: ["Unlimited switch on", "Aspect ratio 16:9", "Resolution 2K", "No reference image"],
+        others: [["Seedream 4.5", "Also marked Unlimited. A backup if you don't like the result."]] },
+      "wide-ref": { name: "Nano Banana Pro", by: "Google", why: IMAGE,
+        chips: ["Unlimited switch on", "Reference image as named on each card", "Aspect ratio 16:9", "Resolution 2K"],
+        others: [["Seedream 4.5", "Also marked Unlimited. It tends to redraw more of the picture, so check the watch has not changed."]] },
+      card: { name: "Nano Banana Pro", by: "Google", why: IMAGE,
+        chips: ["Unlimited switch on", "Reference: 01-front", "Aspect ratio 4:3", "Resolution 2K"],
+        others: [["Seedream 4.5", "Also marked Unlimited."]] },
+      long: { name: "Seedance 2.5", by: "Bytedance",
+        why: "The same model as the short clips, set to its longer length. It can run up to 30 seconds, but check that 15 seconds is still free on Unlimited before generating.",
+        chips: ["480p for Unlimited", "Duration 15 seconds", "Start frame: 01-front", "End frame: 04-stand-magma", "Aspect ratio 16:9", "Audio off"],
+        others: [["Extend Video", "The tab next to References. Make clip A first, then extend it twice with the prompts for B and C. Each extension carries on from the last frame, so there is no join."]] },
+      clip: { name: "Seedance 2.5", by: "Bytedance",
+        why: "The one video model your account can run on Unlimited, at 480p. Choose 'Change to 480p for Unlimited' so the Generate button shows no credit cost.",
+        chips: ["480p for Unlimited", "Start frame as named on each card", "Aspect ratio 16:9", "5 seconds", "Audio off"],
+        others: [["Seedance 2.5 at 720p", "Sharper, but it costs credits. Check the number on the Generate button first."]] },
+    };
+
+    const SET = "It rises from a bed of cracked black lava rock. Behind it, out of focus, a thick ribbon of glowing molten lava curls through the air in one slow arc, from the upper left down to the lower right, and small embers drift through thin smoke. Pure black background. Dramatic low-key lighting from above, with warm orange light from the lava catching the edges of the watch. Razor-sharp focus on the watch. No text, no logo, no people, no human hands.";
+    const SAME = "Use the reference image. Exactly the same sculptural watch, with the same crater-shaped rock case, the same lava running down it, the same molten dial, hands and rock bracelet, in the same setting with the ribbon of lava behind it and the same lighting.";
+    const STEADY = "The watch does not move or change shape. Smoke drifts slowly. One continuous shot, no cuts, no text.";
+
+    const ASSETS = [
+      { group: "master", dir: "assets/stills", file: "01-front", title: "01 Front view (the master)",
+        prompt: `Hyper-detailed cinematic product photograph of a wristwatch standing upright, seen straight from the front. The watch: {watch}. ${SET} The watch is centred and fills about 60 percent of the frame height, with dark empty space on both sides. Photorealistic, extreme detail, 16:9.` },
+      { group: "views", dir: "assets/stills", file: "02-angle", title: "02 Three-quarter view", ref: "01-front",
+        prompt: `${SAME} New camera position: the camera has moved to the right and slightly lower, giving a three-quarter view that shows the side of the crater-shaped case with lava running down it, the crown, and the rock bracelet curving away behind. The watch is centred and a little larger, about 60 percent of the frame height. 16:9.` },
+      { group: "views", dir: "assets/stills", file: "03-macro", title: "03 Close-up of the dial", ref: "01-front",
+        prompt: `${SAME} New camera position: an extreme close-up of the dial, which nearly fills the frame. We see the molten surface of the dial, the two blade-shaped hands and the jagged black rock rim of the crater around it, with lava glowing in its cracks. Shallow depth of field. The centre of the dial is in the centre of the frame. 16:9.` },
+      { group: "views", dir: "assets/stills", file: "04-stand-magma", title: "04 On its stone stand", ref: "01-front",
+        prompt: `${SAME} New camera position: a wider view from further back. The watch now stands upright on a rough block of black basalt, like a plinth, with thin wisps of smoke around its base and faint orange light in cracks of the rock floor. The watch is centred, about 40 percent of the frame height, with dark empty space on both sides. 16:9.` },
+      { group: "dials", dir: "assets/stills", file: "04-stand-ember", title: "04 Ember dial (deep red)", ref: "04-stand-magma",
+        prompt: `Edit the reference image. Keep everything exactly as it is: the same watch, position, size, angle, stone, smoke and lighting. Change only the colour of the dial: it becomes a deep ember red, like glowing coals, with the same cracked enamel texture.` },
+      { group: "dials", dir: "assets/stills", file: "04-stand-ash", title: "04 Ash dial (pale grey)", ref: "04-stand-magma",
+        prompt: `Edit the reference image. Keep everything exactly as it is: the same watch, position, size, angle, stone, smoke and lighting. Change only the colour of the dial: it becomes a pale ash grey with the same cracked enamel texture.` },
+      { group: "dials", dir: "assets/stills", file: "04-stand-cobalt", title: "04 Cobalt dial (blue)", ref: "04-stand-magma",
+        prompt: `Edit the reference image. Keep everything exactly as it is: the same watch, position, size, angle, stone, smoke and lighting. Change only the colour of the dial: it becomes a vivid cobalt blue, like the hottest part of a flame, with the same cracked enamel texture.` },
+      { group: "made", dir: "assets/stills", file: "08-made-cast", title: "08 Made: the case", ref: "01-front",
+        prompt: `Use the reference image for the look of the watch case. Close-up photograph in a dark workshop: the crater-shaped black rock watch case alone, unfinished, with no dial or bracelet, held in a small steel clamp on a workbench, while a fine brush lays glowing orange enamel into one of its cracks. Fine black dust on the bench, one warm lamp. Shallow depth of field. No text, no people. 4:3.` },
+      { group: "made", dir: "assets/stills", file: "09-made-fire", title: "09 Made: the dial", ref: "01-front",
+        prompt: `Use the reference image for the look of the dial. Close-up photograph: the round molten-lava dial alone, glowing as it sits on a small ceramic tray at the mouth of a jeweller's kiln, with bright orange heat behind it and darkness around. Shallow depth of field. No text, no people. 4:3.` },
+      { group: "made", dir: "assets/stills", file: "10-made-test", title: "10 Made: the test", ref: "01-front",
+        prompt: `Use the reference image: exactly the same finished watch. Close-up photograph in a dark workshop: the watch wrapped round a black watch-winder cushion, seen at an angle, with a row of other winders out of focus behind it and one warm lamp above. No text, no people. 4:3.` },
+      { group: "clips", kind: "clip", dir: "assets/clips", file: "clip-a", title: "Clip A: round to the side", ref: "start 01-front, end 02-angle",
+        prompt: `The camera moves slowly and smoothly around the watch, from straight in front to a three-quarter view from the right and slightly lower. ${STEADY}` },
+      { group: "clips", kind: "clip", dir: "assets/clips", file: "clip-b", title: "Clip B: in to the dial", ref: "start 02-angle, end 03-macro",
+        prompt: `The camera glides slowly forward and up towards the face of the watch until the molten dial nearly fills the frame. ${STEADY}` },
+      { group: "clips", kind: "clip", dir: "assets/clips", file: "clip-c", title: "Clip C: back to the whole watch", ref: "start 03-macro, end 04-stand-magma",
+        prompt: `The camera pulls slowly back and away from the dial until the whole watch is seen standing upright on its block of black stone. ${STEADY}` },
+      { group: "single", kind: "clip", dir: "assets/clips", file: "film", title: "One clip: all the way round", ref: "start 01-front, end 04-stand-magma",
+        prompt: `One continuous, unbroken camera move lasting the whole clip, at a constant slow speed with no pauses and no cuts. First third: the camera travels around the watch from straight in front to a three-quarter view from the right and slightly lower. Middle third: it glides forward and up towards the face of the watch until the molten dial nearly fills the frame. Final third: it pulls back and away until the whole watch is seen standing upright on a block of black stone. ${STEADY}` },
+    ];
+
+    const store = {
+      get() { try { return localStorage.getItem("vael-guide-watch-2") || DEFAULT_WATCH; } catch (_) { return DEFAULT_WATCH; } },
+      set(value) { try { localStorage.setItem("vael-guide-watch-2", value); } catch (_) { /* private mode */ } },
+    };
+    let watch = store.get();
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const fill = (text) => text.replaceAll("{watch}", watch.trim() || DEFAULT_WATCH);
+
+    document.querySelectorAll(".model").forEach((box) => {
+      const m = MODELS[box.dataset.model];
+      box.innerHTML =
+        `<p class="label">Model to pick in Higgsfield</p>` +
+        `<p class="name">${esc(m.name)}<small>${esc(m.by)}</small></p>` +
+        `<p class="why">${esc(m.why)}</p>` +
+        `<ul class="chips">${m.chips.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` +
+        `<details><summary>Other options</summary><ul>` +
+        m.others.map(([n, d]) => `<li><b>${esc(n)}</b>: ${esc(d)}</li>`).join("") + `</ul></details>`;
+    });
+
+    const cards = ASSETS.map((a) => {
+      const clip = a.kind === "clip";
+      const el = document.createElement("article");
+      el.className = "asset";
+      el.innerHTML =
+        `<div class="asset-head"><h3>${esc(a.title)}</h3><span class="status">Not in folder yet</span></div>` +
+        `<div class="asset-body"><p class="prompt"></p><img class="preview" alt="" hidden></div>` +
+        `<div class="asset-foot"><button class="copy" type="button">Copy prompt</button>` +
+        `<span>${a.ref ? `${clip ? "Frames" : "Reference"}: <code>${esc(a.ref)}</code>. ` : ""}Save as <code>${esc(a.file)}.${clip ? "mp4" : "jpg"}</code> in <code>${esc(a.dir)}</code></span></div>`;
+      document.querySelector(`[data-assets="${a.group}"]`).append(el);
+      const card = { el, promptEl: el.querySelector(".prompt"), text: () => fill(a.prompt), path: `${a.dir}/${a.file}`, clip };
+      el.querySelector(".copy").addEventListener("click", (e) => copy(card.text(), e.currentTarget));
+      return card;
+    });
+
+    function renderPrompts() { cards.forEach((c) => { c.promptEl.textContent = c.text(); }); }
+
+    async function copy(text, button) {
+      let ok = false;
+      try { await navigator.clipboard.writeText(text); ok = true; }
+      catch (_) {
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.append(ta); ta.select();
+        try { ok = document.execCommand("copy"); } catch (_) { ok = false; }
+        ta.remove();
+      }
+      button.textContent = ok ? "Copied" : "Select the text and copy it";
+      button.classList.toggle("is-done", ok);
+      window.setTimeout(() => { button.textContent = "Copy prompt"; button.classList.remove("is-done"); }, 1800);
+    }
+
+    function findStill(path) {
+      return new Promise((resolve) => {
+        const attempt = (n) => {
+          if (n >= TYPES.length) return resolve(null);
+          const url = `${path}.${TYPES[n]}`;
+          const img = new Image();
+          img.onload = () => resolve(url);
+          img.onerror = () => attempt(n + 1);
+          img.src = `${url}?t=${Date.now()}`;
+        };
+        attempt(0);
+      });
+    }
+
+    function findClip(path) {
+      return new Promise((resolve) => {
+        const video = document.createElement("video");
+        video.preload = "metadata";
+        video.onloadedmetadata = () => resolve(`${path}.mp4`);
+        video.onerror = () => resolve(null);
+        video.src = `${path}.mp4?t=${Date.now()}`;
+      });
+    }
+
+    let run = 0;
+    async function checkFolder() {
+      const mine = ++run;
+      const found = await Promise.all(cards.map((c) => (c.clip ? findClip(c.path) : findStill(c.path))));
+      if (mine !== run) return;
+      found.forEach((url, i) => {
+        const card = cards[i];
+        card.el.classList.toggle("is-found", Boolean(url));
+        card.el.querySelector(".status").textContent = url ? "In folder" : "Not in folder yet";
+        const preview = card.el.querySelector(".preview");
+        preview.hidden = !url || card.clip;
+        if (url && !card.clip) preview.src = url;
+      });
+      const stills = cards.filter((c) => !c.clip).length;
+      const stillsDone = found.filter((url, i) => url && !cards[i].clip).length;
+      const clipsDone = found.filter((url, i) => url && cards[i].clip).length;
+      document.getElementById("meterFill").style.width = `${(found.filter(Boolean).length / cards.length) * 100}%`;
+      document.getElementById("progressText").textContent =
+        `${stillsDone} of ${stills} pictures in place, ${clipsDone} clip${clipsDone === 1 ? "" : "s"} in the folder`;
+    }
+
+    const input = document.getElementById("watch");
+    input.value = watch;
+    input.placeholder = DEFAULT_WATCH;
+    input.addEventListener("input", () => { watch = input.value; store.set(watch); renderPrompts(); });
+
+    document.getElementById("recheck").addEventListener("click", checkFolder);
+    window.addEventListener("focus", checkFolder);
+    renderPrompts();
+    checkFolder();
+  })();
+  </script>
+</body>
+</html>
